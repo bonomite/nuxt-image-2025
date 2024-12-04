@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   image: {
     // provider: 'wagtail',
     wagtail: {
-      // baseURL: 'https://cms.prod.nypr.digital/images/',
+      baseURL: 'https://cms.prod.nypr.digital/images/',
     },
     densities: [1, 2],
     screens: {
