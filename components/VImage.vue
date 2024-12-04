@@ -33,10 +33,15 @@ const getCmsSource = (src) => {
 
 <template>
   <NuxtImg
+    :key="props.src"
     v-bind:provider="getCmsSource(props.src) || undefined"
     :src="props.src"
     v-bind="{ ...$props, ...$attrs }"
-  />
+  >
+    <template v-for="(value, name) in $slots" #[name]="data">
+      <slot :name="name" v-bind="data"></slot>
+    </template>
+  </NuxtImg>
   <!-- <NuxtImg :placeholder="img(`/nuxt.svg`, { h: 10, f: 'png', blur: 2, q: 50 })" src="/nuxt.svg`" /> -->
 </template>
 

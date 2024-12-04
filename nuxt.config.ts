@@ -8,6 +8,12 @@ export default defineNuxtConfig({
     wagtail: {
       baseURL: 'https://cms.prod.nypr.digital/images/',
     },
+    publisher: {
+      baseURL: 'https://cms.prod.nypr.digital/images/',
+    },
+    npr: {
+      baseURL: 'https://cms.prod.nypr.digital/images/',
+    },
     densities: [1, 2],
     screens: {
       xs: 320,
