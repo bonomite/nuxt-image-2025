@@ -30,22 +30,28 @@ const getCmsProvider = (src) => {
   }
 }
 
-const getImageSrc = (img, provider) => {
-  if (!provider) {
-    return img
-  } else if (provider === cmsSources.WAGTAIL) {
-    return img.id
-  } else if (provider === cmsSources.PUBLISHER) {
-    return img.template
-  } else if (provider === cmsSources.NPR) {
-    return img.template
-  } else {
-    return img.url
+const normalizeImage = (imgObj, provider) => {
+  let normalizedImage = {
+    alt: imgObj.altText || imgObj.alt || "",
+    caption: imgObj.caption || "",
   }
+  if (!provider) {
+    return imgObj
+  } else if (provider === cmsSources.WAGTAIL) {
+    return imgObj.id
+  } else if (provider === cmsSources.PUBLISHER) {
+    return imgObj.template
+  } else if (provider === cmsSources.NPR) {
+    return imgObj.template
+  } else {
+    return imgObj.url
+  }
+
+  return normalizedImage
 }
 
 const thisProvider = getCmsProvider(props.src) || undefined
-const thisSrc = getImageSrc(props.src, thisProvider)
+const thisNormalizedImage = normalizeImage(props.src, thisProvider)
 </script>
 
 <template>
