@@ -1,4 +1,34 @@
 <script setup>
+const imageNormalizer = (imgObj, provider) => {
+  const src = (() => {
+    switch (provider) {
+      case undefined:
+        return imgObj.src
+      case "wagtail":
+        return imgObj.id
+      case "publisher":
+        return imgObj.name
+      case "npr":
+        return imgObj.src
+      default:
+        return ""
+    }
+  })()
+
+  return {
+    id: imgObj.id,
+    src,
+    alt: imgObj.alt ?? imgObj.altText,
+    provider,
+    width: imgObj.width ?? imgObj.w,
+    height: imgObj.height ?? imgObj.h,
+    caption: imgObj.caption,
+    credit: imgObj.credit ?? `Photo by ${imgObj.source.name}/${imgObj.source.name}`,
+    creditLink: imgObj.creditLink ?? imgObj.creditsUrl,
+    raw: imgObj.file ?? imgObj.url,
+  }
+}
+
 const wagtailImage = {
   id: 348546,
   title: "GettyImages-2188232134.jpg",
@@ -41,16 +71,109 @@ const publisherImage = {
   creditsName: "Kevin Dietsch",
 }
 
-const nprImage = "348477"
+const nprImage = {
+  altText:
+    "Wicked tells the origin story of Elphaba, the Wicked Witch of the West (Cynthia Erivo), and her friendship with Galinda, who becomes Glinda the Good (Ariana Grande).",
+  caption:
+    "<em>Wicked </em>tells the origin story of Elphaba, the Wicked Witch of the West (Cynthia Erivo), and her friendship with Galinda, who becomes Glinda the Good (Ariana Grande).",
+  displaySize: "large",
+  id: "g-s1-34905",
+  isRestrictedToAuthorizedOrgServiceIds: false,
+  producer: "Giles Keyte",
+  profiles: [
+    { href: "/v1/profiles/document" },
+    { href: "/v1/profiles/image", rels: [Array] },
+  ],
+  provider: "Universal Pictures",
+  title: "WICKED",
+  enclosures: [
+    {
+      height: 4000,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/5336x4000+664+0/resize/5336x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/5336x4000+664+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 5336,
+    },
+    {
+      height: 2508,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4461x2508+1539+0/resize/4461x2508!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4461x2508+1539+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 4461,
+    },
+    {
+      height: 4000,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4002x4000+1998+0/resize/4002x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4002x4000+1998+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 4002,
+    },
+    {
+      height: 4000,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/6000x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 6000,
+    },
+    {
+      height: 2759,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x2759+0+0/resize/6000x2759!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x2759+0+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 6000,
+    },
+    {
+      height: 4000,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/3000x4000+2129+0/resize/3000x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/3000x4000+2129+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 3000,
+    },
+    {
+      height: 4000,
+      href:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/6000x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      hrefTemplate:
+        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
+      rels: [Array],
+      type: "image/jpeg",
+      width: 6000,
+    },
+  ],
+}
 </script>
 <template>
   <div>
     <p>local:</p>
-    <VImage src="/raven_phoenix_mix.jpg" :width="200" :height="200" />
+    <VImage src="/raven_phoenix_mix.jpg" />
     <p>wagtail:</p>
-    <VImage src="348477" />
+    <VImage
+      :src="wagtailImage.id"
+      :alt="wagtailImage.alt"
+      width="600"
+      height="100"
+      provider="wagtail"
+    />
     <p>publisher:</p>
-    <VImage src="/2024/12/GettyImages-2162463514.jpg" />
+    <VImage src="/2024/12/GettyImages-2162463514.jpg" provider="publisher" />
     <!-- <p>npr:</p>
     <VImage src="348477" />  -->
   </div>
