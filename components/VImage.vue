@@ -2,7 +2,7 @@
 const props = defineProps({
   src: {
     required: true,
-    type: String,
+    type: [String, Object],
     default: "344060",
   },
 })
@@ -17,7 +17,7 @@ const cmsSources = {
 const NPR_IMAGE_DOMAIN_SOURCES = ["media.npr.org", "npr.brightspotcdn.com"]
 
 // determines the CMS source of an image
-const getCmsSource = (src) => {
+const getCmsProvider = (src) => {
   // if src is all just numbers, it's a wagtail image. using the domain for the others
   if (/^\d+$/.test(src)) {
     return cmsSources.WAGTAIL
@@ -29,12 +29,29 @@ const getCmsSource = (src) => {
     return null
   }
 }
+
+const getImageSrc = (img, provider) => {
+  if (!provider) {
+    return img
+  } else if (provider === cmsSources.WAGTAIL) {
+    return img.id
+  } else if (provider === cmsSources.PUBLISHER) {
+    return img.template
+  } else if (provider === cmsSources.NPR) {
+    return img.template
+  } else {
+    return img.url
+  }
+}
+
+const thisProvider = getCmsProvider(props.src) || undefined
+const thisSrc = getImageSrc(props.src, thisProvider)
 </script>
 
 <template>
   <NuxtImg
     :key="props.src"
-    v-bind:provider="getCmsSource(props.src) || undefined"
+    v-bind:provider="thisProvider"
     :src="props.src"
     v-bind="{ ...$props, ...$attrs }"
   >

@@ -5,14 +5,40 @@ export default defineNuxtConfig({
   modules: ['@nuxt/image'],
   image: {
     // provider: 'wagtail',
-    wagtail: {
-      baseURL: 'https://cms.prod.nypr.digital/images/',
-    },
-    publisher: {
-      baseURL: 'https://cms.prod.nypr.digital/images/',
-    },
-    npr: {
-      baseURL: 'https://cms.prod.nypr.digital/images/',
+    // wagtail: {
+    //   baseURL: 'https://cms.prod.nypr.digital/images/',
+    // },
+    // publisher: {
+    //   baseURL: 'https://media.wnyc.org/',
+    // },
+    // npr: {
+    //   baseURL: 'https://cms.prod.nypr.digital/images/',
+    // },
+    providers: {
+      publisher: {
+        name: 'publisher', // optional value to overrider provider name
+        provider: '~/providers/publisher.ts', // Path to custom provider
+        options: {
+          // ... provider options
+          baseURL: "https://media.wnyc.org/"
+        }
+      },
+      wagtail: {
+        name: 'wagtail', // optional value to overrider provider name
+        provider: '~/providers/wagtail.ts', // Path to custom provider
+        options: {
+          // ... provider options
+          baseURL: "https://cms.prod.nypr.digital/images/"
+        }
+      },
+      npr: {
+        name: 'npr', // optional value to overrider provider name
+        provider: '~/providers/npr.ts', // Path to custom provider
+        options: {
+          // ... provider options
+          baseURL: "https://npr.brightspotcdn.com/"
+        }
+      }
     },
     densities: [1, 2],
     screens: {
