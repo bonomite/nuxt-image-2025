@@ -4,16 +4,6 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ['@nuxt/image'],
   image: {
-    // provider: 'wagtail',
-    // wagtail: {
-    //   baseURL: 'https://cms.prod.nypr.digital/images/',
-    // },
-    // publisher: {
-    //   baseURL: 'https://media.wnyc.org/',
-    // },
-    // npr: {
-    //   baseURL: 'https://cms.prod.nypr.digital/images/',
-    // },
     providers: {
       publisher: {
         name: 'publisher', // optional value to overrider provider name

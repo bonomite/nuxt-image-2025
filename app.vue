@@ -1,30 +1,84 @@
 <script setup>
-const imageNormalizer = (imgObj, provider) => {
-  const src = (() => {
-    switch (provider) {
-      case undefined:
-        return imgObj.src
-      case "wagtail":
-        return imgObj.id
-      case "publisher":
-        return imgObj.name
-      case "npr":
-        return imgObj.src
-      default:
-        return ""
+const findImageUrl = (item, nprImageType) => {
+  try {
+    let imageUrl = null
+    for (const asset of Object.values(item.resources[0].assets)) {
+      if (asset.profiles[0]?.href === "/v1/profiles/image") {
+        const imageEnclosure = asset.enclosures.find((enclosure) =>
+          enclosure.rels.includes(nprImageType)
+        )
+        if (imageEnclosure) {
+          imageUrl = {
+            raw: imageEnclosure.href,
+            template: imageEnclosure.hrefTemplate,
+            width: imageEnclosure.width,
+            height: imageEnclosure.height,
+          }
+          break // Exit the loop once the matching image URL is found
+        }
+      }
     }
-  })()
+    return imageUrl
+  } catch (e) {
+    console.error("findImageUrl error = ", e)
+    return null
+  }
+}
+
+const imageNormalizer = (imgObj, provider, nprImageType = "image-square") => {
+  let src = ""
+  let credit = null
+  let creditLink = null
+  let alt = null
+  let width = 0
+  let height = 0
+  switch (provider) {
+    case undefined:
+      src = imgObj.src
+    case "wagtail":
+      src = imgObj.id
+      raw = imgObj.file
+      width = imgObj.width
+      height = imgObj.height
+      credit = imgObj.credit
+      creditLink = imgObj.creditLink
+      alt = imgObj.alt
+    case "publisher":
+      src = imgObj.name
+      raw = imgObj.url
+      width = imgObj.w
+      height = imgObj.h
+      credit = `Photo by ${imgObj.creditsName}${
+        imgObj.source.name ? `/${imgObj.source.name}` : ""
+      }`
+      creditLink = imgObj.creditsUrl
+      alt = imgObj.altText
+    case "npr":
+      const nprImageVersion = findImageUrl(imgObj, nprImageType)
+      src = nprImageVersion.template
+      raw = nprImageVersion.raw
+      width = nprImageVersion.width
+      height = nprImageVersion.height
+      credit = `Photo by ${imgObj.producer}${
+        imgObj.provider ? `/${imgObj.provider}` : ""
+      }`
+      creditLink = imgObj.creditsUrl
+      alt = imgObj.altText
+
+    default:
+      src = imgObj.src
+  }
 
   return {
     id: imgObj.id,
     src,
-    alt: imgObj.alt ?? imgObj.altText,
+    alt,
     provider,
     width: imgObj.width ?? imgObj.w,
     height: imgObj.height ?? imgObj.h,
     caption: imgObj.caption,
-    credit: imgObj.credit ?? `Photo by ${imgObj.source.name}/${imgObj.source.name}`,
-    creditLink: imgObj.creditLink ?? imgObj.creditsUrl,
+    credit,
+    creditLink,
     raw: imgObj.file ?? imgObj.url,
   }
 }
