@@ -3,18 +3,22 @@ const props = defineProps({
   src: {
     required: true,
     type: [Object, String],
-    default: "344060",
+    default: {
+      src: "344060",
+      provider: "wagtail",
+      alt: "Fallback image",
+    },
   },
 })
 </script>
 
 <template>
+  <pre>{{ props.src }}</pre>
   <NuxtImg
-    :key="props.src.id"
-    v-bind:provider="props.provider"
-    :src="props.src.src"
+    v-bind:provider="props.src?.provider"
+    :src="typeof props.src === 'string' ? props.src : props.src.src"
     style="width: 100%; height: auto"
-    v-bind="{ ...$props, ...$attrs }"
+    v-bind="{ ...$attrs }"
   >
     <template v-for="(value, name) in $slots" #[name]="data">
       <slot :name="name" v-bind="data"></slot>
