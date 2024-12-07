@@ -2,21 +2,17 @@
 const props = defineProps({
   src: {
     required: true,
-    type: String,
+    type: [Object, String],
     default: "344060",
-  },
-  provider: {
-    type: String,
-    default: undefined,
   },
 })
 </script>
 
 <template>
   <NuxtImg
-    :key="props.src"
+    :key="props.src.id"
     v-bind:provider="props.provider"
-    :src="props.src"
+    :src="props.src.src"
     style="width: 100%; height: auto"
     v-bind="{ ...$props, ...$attrs }"
   >

@@ -1,5 +1,6 @@
 <script setup>
-const findImageUrl = (item, nprImageType) => {
+const getNprImage = (item, nprImageType) => {
+  console.log("getting npr image")
   try {
     let imageUrl = null
     for (const asset of Object.values(item.resources[0].assets)) {
@@ -18,68 +19,83 @@ const findImageUrl = (item, nprImageType) => {
         }
       }
     }
+    console.log("imageUrl = ", imageUrl)
     return imageUrl
   } catch (e) {
-    console.error("findImageUrl error = ", e)
+    console.error("getNprImage error = ", e)
     return null
   }
 }
 
-const imageNormalizer = (imgObj, provider, nprImageType = "image-square") => {
+const imageNormalizer = (
+  imgObj,
+  provider = "wagtial",
+  nprImageType = "image-standard"
+) => {
   let src = ""
   let credit = null
   let creditLink = null
   let alt = null
   let width = 0
   let height = 0
+  let raw = ""
+  console.log("provider = ", provider)
   switch (provider) {
     case undefined:
       src = imgObj.src
+      break
     case "wagtail":
-      src = imgObj.id
+      console.log("wagtail image")
+      src = String(imgObj.id)
       raw = imgObj.file
       width = imgObj.width
       height = imgObj.height
       credit = imgObj.credit
       creditLink = imgObj.creditLink
       alt = imgObj.alt
+      break
     case "publisher":
+      console.log("publisher image")
       src = imgObj.name
       raw = imgObj.url
       width = imgObj.w
       height = imgObj.h
       credit = `Photo by ${imgObj.creditsName}${
-        imgObj.source.name ? `/${imgObj.source.name}` : ""
+        imgObj.source?.name ? `/${imgObj.source.name}` : ""
       }`
       creditLink = imgObj.creditsUrl
       alt = imgObj.altText
+      break
     case "npr":
-      const nprImageVersion = findImageUrl(imgObj, nprImageType)
-      src = nprImageVersion.template
-      raw = nprImageVersion.raw
-      width = nprImageVersion.width
-      height = nprImageVersion.height
+      console.log("npr image")
+      const nprImageVersion = getNprImage(imgObj, nprImageType)
+      console.log("nprImageVersion = ", nprImageVersion)
+      src = nprImageVersion?.template
+      raw = nprImageVersion?.raw
+      width = nprImageVersion?.width
+      height = nprImageVersion?.height
       credit = `Photo by ${imgObj.producer}${
         imgObj.provider ? `/${imgObj.provider}` : ""
       }`
       creditLink = imgObj.creditsUrl
       alt = imgObj.altText
-
+      break
     default:
       src = imgObj.src
+      break
   }
 
   return {
-    id: imgObj.id,
+    id: String(imgObj.id),
     src,
     alt,
     provider,
-    width: imgObj.width ?? imgObj.w,
-    height: imgObj.height ?? imgObj.h,
+    width,
+    height,
     caption: imgObj.caption,
     credit,
     creditLink,
-    raw: imgObj.file ?? imgObj.url,
+    raw,
   }
 }
 
@@ -147,7 +163,7 @@ const nprImage = {
         "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/5336x4000+664+0/resize/5336x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
       hrefTemplate:
         "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/5336x4000+664+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
+      rels: ["image-standard", "primary", "scalable"],
       type: "image/jpeg",
       width: 5336,
     },
@@ -157,7 +173,7 @@ const nprImage = {
         "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4461x2508+1539+0/resize/4461x2508!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
       hrefTemplate:
         "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4461x2508+1539+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
+      rels: ["image-wide", "primary", "scalable"],
       type: "image/jpeg",
       width: 4461,
     },
@@ -167,67 +183,24 @@ const nprImage = {
         "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4002x4000+1998+0/resize/4002x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
       hrefTemplate:
         "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4002x4000+1998+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
+      rels: ["image-square", "primary", "scalable"],
       type: "image/jpeg",
       width: 4002,
     },
-    {
-      height: 4000,
-      href:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/6000x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      hrefTemplate:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
-      type: "image/jpeg",
-      width: 6000,
-    },
-    {
-      height: 2759,
-      href:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x2759+0+0/resize/6000x2759!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      hrefTemplate:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x2759+0+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
-      type: "image/jpeg",
-      width: 6000,
-    },
-    {
-      height: 4000,
-      href:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/3000x4000+2129+0/resize/3000x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      hrefTemplate:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/3000x4000+2129+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
-      type: "image/jpeg",
-      width: 3000,
-    },
-    {
-      height: 4000,
-      href:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/6000x4000!/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      hrefTemplate:
-        "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/6000x4000+0+0/resize/{width}/quality/{quality}/format/{format}/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F3f%2F75%2F8c438eab4a9eadbc912bdec9d47f%2F2551-d133-00142r.jpg",
-      rels: [Array],
-      type: "image/jpeg",
-      width: 6000,
-    },
   ],
 }
+
+const wagtailImageNormalized = imageNormalizer(wagtailImage, "wagtail")
+console.log("wagtailImageNormalized = ", wagtailImageNormalized)
 </script>
 <template>
   <div>
     <p>local:</p>
     <VImage src="/raven_phoenix_mix.jpg" />
     <p>wagtail:</p>
-    <VImage
-      :src="wagtailImage.id"
-      :alt="wagtailImage.alt"
-      width="600"
-      height="100"
-      provider="wagtail"
-    />
-    <p>publisher:</p>
-    <VImage src="/2024/12/GettyImages-2162463514.jpg" provider="publisher" />
+    <VImage :src="wagtailImageNormalized" width="600" height="100" />
+    <!-- <p>publisher:</p>
+    <VImage src="/2024/12/GettyImages-2162463514.jpg" provider="publisher" /> -->
     <!-- <p>npr:</p>
     <VImage src="348477" />  -->
   </div>
