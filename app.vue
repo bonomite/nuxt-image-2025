@@ -191,7 +191,8 @@ const nprImage = {
 }
 
 const wagtailImageNormalized = imageNormalizer(wagtailImage, "wagtail")
-console.log("wagtailImageNormalized = ", wagtailImageNormalized)
+const publisherImageNormalized = imageNormalizer(publisherImage, "publisher")
+//console.log("wagtailImageNormalized = ", wagtailImageNormalized)
 </script>
 <template>
   <div>
@@ -199,8 +200,12 @@ console.log("wagtailImageNormalized = ", wagtailImageNormalized)
     <VImage src="/raven_phoenix_mix.jpg" />
     <p>wagtail:</p>
     <VImage :src="wagtailImageNormalized" width="600" height="100" />
-    <!-- <p>publisher:</p>
-    <VImage src="/2024/12/GettyImages-2162463514.jpg" provider="publisher" /> -->
+    <p>wagtail raw:</p>
+    <VImage :src="wagtailImageNormalized" />
+    <p>publisher:</p>
+    <VImage :src="publisherImageNormalized" width="600" height="100" />
+    <p>publisher raw:</p>
+    <VImage :src="publisherImageNormalized" />
     <!-- <p>npr:</p>
     <VImage src="348477" />  -->
   </div>

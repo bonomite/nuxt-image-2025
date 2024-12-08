@@ -2,8 +2,6 @@ import { withBase, joinURL } from 'ufo'
 import type { ProviderGetImage } from '@nuxt/image'
 import { createOperationsGenerator } from '#image'
 
-const operationsGenerator = createOperationsGenerator()
-
 export const getImage: ProviderGetImage = (
     src,
     { modifiers = {}, baseURL } = {}
@@ -32,11 +30,9 @@ export const getImage: ProviderGetImage = (
         doHeight ? `height-${height}${formatting}` : '',
         doOriginal ? `original${formatting}` : '',
     )
-    const operations = operationsGenerator(modifiers)
-    console.log("operations", operations)
 
     const url = withBase(joinURL(src, options), baseURL)
-
+    //console.log("url", url)
     return {
         url,
     }

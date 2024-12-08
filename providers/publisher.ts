@@ -2,8 +2,6 @@ import { withBase, joinURL } from 'ufo'
 import type { ProviderGetImage } from '@nuxt/image'
 import { createOperationsGenerator } from '#image'
 
-const operationsGenerator = createOperationsGenerator()
-
 export const getImage: ProviderGetImage = (
     src,
     { modifiers = {}, baseURL } = {}
@@ -11,8 +9,6 @@ export const getImage: ProviderGetImage = (
     const {
         width = '0',
         height = '0',
-        focusZoom = '0',
-        format = 'webp',
         quality = '70',
     } = modifiers
 
@@ -20,22 +16,28 @@ export const getImage: ProviderGetImage = (
         // also support runtime config 
         baseURL = useRuntimeConfig().public.publisherBaseUrl
     }
+
     const doFill = width !== '0' && height !== '0'
     const doWidth = width !== '0' && height === '0'
     const doHeight = width === '0' && height !== '0'
     const doOriginal = width === '0' && height === '0'
 
-    const formatting = `|format-${format}|${format}quality-${quality}`
     const options = joinURL(
-        doFill ? `fill-${width}x${height}-c${focusZoom}${formatting}` : '',
-        doWidth ? `width-${width}${formatting}` : '',
-        doHeight ? `height-${height}${formatting}` : '',
-        doOriginal ? `original${formatting}` : '',
+        doFill ? `i/${width}/${height}/c/${quality}` : '',
+        doWidth ? `i/${width}/0/c/${quality}` : '',
+        doHeight ? `i/0/${height}/c/${quality}` : '',
+        doOriginal ? `i/0/0/c/${quality}` : '',
     )
-    const operations = operationsGenerator(modifiers)
-    console.log("operations", operations)
+    const url = withBase(joinURL(options, src), baseURL)
+    console.log("doFill", doFill)
+    console.log("doWidth", doWidth)
+    console.log("doHeight", doHeight)
+    console.log("doOriginal", doOriginal)
+    console.log("width", width)
+    console.log("height", height)
+    console.log("publisher options", options)
+    console.log("publisher url", url)
 
-    const url = withBase(joinURL(src, options), baseURL)
 
     return {
         url,
