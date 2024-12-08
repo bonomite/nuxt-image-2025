@@ -5,7 +5,15 @@ const getNprImage = (item, nprImageType) => {
     let imageUrl = null
 
     const imageEnclosure = item.enclosures.find((enclosure) =>
-      enclosure.rels.includes(nprImageType)
+      // image-standard
+      // image-square
+      // image-wide
+      // image-enlargement
+      // image-custom
+      // image-brick
+      // image-vertical
+      // image-slide
+      enclosure.rels.includes(`image-${nprImageType}`)
     )
     if (imageEnclosure) {
       imageUrl = {
@@ -24,11 +32,29 @@ const getNprImage = (item, nprImageType) => {
   }
 }
 
-const imageNormalizer = (
-  imgObj,
-  provider = "wagtial",
-  nprImageType = "image-standard"
-) => {
+const cmsSources = {
+  NPR: "npr",
+  PUBLISHER: "publisher",
+  WAGTAIL: "wagtail",
+}
+
+// determines the CMS source of an image
+const getProvider = (imgObj) => {
+  if (typeof imgObj === "string") {
+    // is IPX pass undefined
+    return undefined
+  } else if (imgObj.enclosures) {
+    return cmsSources.NPR
+  } else if (imgObj.template?.includes("media.wnyc.org")) {
+    return cmsSources.PUBLISHER
+  } else {
+    return cmsSources.WAGTAIL
+  }
+}
+
+const imageNormalizer = (imgObj, nprImageType = "standard") => {
+  const provider = getProvider(imgObj)
+  console.log("provider = ", provider)
   let src = ""
   let credit = null
   let creditLink = null
@@ -182,11 +208,6 @@ const nprImage = {
   ],
 }
 
-const wagtailImageNormalized = imageNormalizer(wagtailImage, "wagtail")
-const publisherImageNormalized = imageNormalizer(publisherImage, "publisher")
-const nprImageNormalized = imageNormalizer(nprImage, "npr")
-const nprImageNormalizedSquare = imageNormalizer(nprImage, "npr", "image-square")
-const nprImageNormalizedWide = imageNormalizer(nprImage, "npr", "image-wide")
 //console.log("wagtailImageNormalized = ", wagtailImageNormalized)
 </script>
 <template>
@@ -194,22 +215,22 @@ const nprImageNormalizedWide = imageNormalizer(nprImage, "npr", "image-wide")
     <p>local:</p>
     <VImage src="/raven_phoenix_mix.jpg" />
     <p>wagtail:</p>
-    <VImage :src="wagtailImageNormalized" width="600" height="100" />
+    <VImage :src="imageNormalizer(wagtailImage)" width="600" height="100" />
     <p>wagtail raw:</p>
-    <VImage :src="wagtailImageNormalized" />
+    <VImage :src="imageNormalizer(wagtailImage)" />
     <p>publisher:</p>
-    <VImage :src="publisherImageNormalized" width="600" height="100" />
+    <VImage :src="imageNormalizer(publisherImage)" width="600" height="100" />
     <p>publisher raw:</p>
-    <VImage :src="publisherImageNormalized" />
+    <VImage :src="imageNormalizer(publisherImage)" />
     <p>npr W:</p>
-    <VImage :src="nprImageNormalized" width="300" />
+    <VImage :src="imageNormalizer(nprImage)" width="300" />
     <p>npr W & H (can't have a custom ratio):</p>
-    <VImage :src="nprImageNormalized" width="300" height="50" />
+    <VImage :src="imageNormalizer(nprImage)" width="300" height="50" />
     <p>npr raw:</p>
-    <VImage :src="nprImageNormalized" />
+    <VImage :src="imageNormalizer(nprImage)" />
     <p>npr square:</p>
-    <VImage :src="nprImageNormalizedSquare" width="300" />
+    <VImage :src="imageNormalizer(nprImage, 'square')" width="300" />
     <p>npr wide:</p>
-    <VImage :src="nprImageNormalizedWide" width="300" />
+    <VImage :src="imageNormalizer(nprImage, 'wide')" width="300" />
   </div>
 </template>
