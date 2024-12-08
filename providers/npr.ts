@@ -1,8 +1,10 @@
-import { withBase, joinURL } from 'ufo'
+//import { withBase, joinURL } from 'ufo'
 import type { ProviderGetImage } from '@nuxt/image'
-import { createOperationsGenerator } from '#image'
 
-const operationsGenerator = createOperationsGenerator()
+const extractNprMax = (template: string) => {
+    const match = template.match(/crop\/(\d+x\d+)/);
+    return match ? `${match[1]}!` : '0x0!';
+}
 
 export const getImage: ProviderGetImage = (
     src,
@@ -11,7 +13,6 @@ export const getImage: ProviderGetImage = (
     const {
         width = '0',
         height = '0',
-        focusZoom = '0',
         format = 'webp',
         quality = '70',
     } = modifiers
@@ -20,22 +21,26 @@ export const getImage: ProviderGetImage = (
         // also support runtime config 
         baseURL = useRuntimeConfig().public.publisherBaseUrl
     }
-    const doFill = width !== '0' && height !== '0'
-    const doWidth = width !== '0' && height === '0'
-    const doHeight = width === '0' && height !== '0'
-    const doOriginal = width === '0' && height === '0'
 
-    const formatting = `|format-${format}|${format}quality-${quality}`
-    const options = joinURL(
-        doFill ? `fill-${width}x${height}-c${focusZoom}${formatting}` : '',
-        doWidth ? `width-${width}${formatting}` : '',
-        doHeight ? `height-${height}${formatting}` : '',
-        doOriginal ? `original${formatting}` : '',
-    )
-    const operations = operationsGenerator(modifiers)
-    console.log("operations", operations)
+    let theWidth = ""
+    // doFill
+    if (width !== '0' && height !== '0') {
+        theWidth = `${width}x${height}!`
+        // doWidth
+    } else if (width !== '0' && height === '0') {
+        theWidth = `${width}`
+        // doOriginal
+    } else if (width === '0' && height === '0') {
+        theWidth = extractNprMax(src)
+    }
 
-    const url = withBase(joinURL(src, options), baseURL)
+    console.log('## theWidth= ', theWidth)
+
+
+    const url = src
+        .replace("{width}", String(theWidth))
+        .replace("{quality}", String(quality))
+        .replace("{format}", String(format))
 
     return {
         url,

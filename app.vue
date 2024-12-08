@@ -3,23 +3,20 @@ const getNprImage = (item, nprImageType) => {
   console.log("getting npr image")
   try {
     let imageUrl = null
-    for (const asset of Object.values(item.resources[0].assets)) {
-      if (asset.profiles[0]?.href === "/v1/profiles/image") {
-        const imageEnclosure = asset.enclosures.find((enclosure) =>
-          enclosure.rels.includes(nprImageType)
-        )
-        if (imageEnclosure) {
-          imageUrl = {
-            raw: imageEnclosure.href,
-            template: imageEnclosure.hrefTemplate,
-            width: imageEnclosure.width,
-            height: imageEnclosure.height,
-          }
-          break // Exit the loop once the matching image URL is found
-        }
+
+    const imageEnclosure = item.enclosures.find((enclosure) =>
+      enclosure.rels.includes(nprImageType)
+    )
+    if (imageEnclosure) {
+      imageUrl = {
+        raw: imageEnclosure.href,
+        template: imageEnclosure.hrefTemplate,
+        width: imageEnclosure.width,
+        height: imageEnclosure.height,
       }
     }
-    console.log("imageUrl = ", imageUrl)
+
+    //console.log("imageUrl = ", imageUrl)
     return imageUrl
   } catch (e) {
     console.error("getNprImage error = ", e)
@@ -39,13 +36,11 @@ const imageNormalizer = (
   let width = 0
   let height = 0
   let raw = ""
-  console.log("provider = ", provider)
   switch (provider) {
     case undefined:
       src = imgObj.src
       break
     case "wagtail":
-      console.log("wagtail image")
       src = String(imgObj.id)
       raw = imgObj.file
       width = imgObj.width
@@ -55,7 +50,6 @@ const imageNormalizer = (
       alt = imgObj.alt
       break
     case "publisher":
-      console.log("publisher image")
       src = imgObj.name
       raw = imgObj.url
       width = imgObj.w
@@ -67,9 +61,7 @@ const imageNormalizer = (
       alt = imgObj.altText
       break
     case "npr":
-      console.log("npr image")
       const nprImageVersion = getNprImage(imgObj, nprImageType)
-      console.log("nprImageVersion = ", nprImageVersion)
       src = nprImageVersion?.template
       raw = nprImageVersion?.raw
       width = nprImageVersion?.width
@@ -192,6 +184,9 @@ const nprImage = {
 
 const wagtailImageNormalized = imageNormalizer(wagtailImage, "wagtail")
 const publisherImageNormalized = imageNormalizer(publisherImage, "publisher")
+const nprImageNormalized = imageNormalizer(nprImage, "npr")
+const nprImageNormalizedSquare = imageNormalizer(nprImage, "npr", "image-square")
+const nprImageNormalizedWide = imageNormalizer(nprImage, "npr", "image-wide")
 //console.log("wagtailImageNormalized = ", wagtailImageNormalized)
 </script>
 <template>
@@ -206,7 +201,15 @@ const publisherImageNormalized = imageNormalizer(publisherImage, "publisher")
     <VImage :src="publisherImageNormalized" width="600" height="100" />
     <p>publisher raw:</p>
     <VImage :src="publisherImageNormalized" />
-    <!-- <p>npr:</p>
-    <VImage src="348477" />  -->
+    <p>npr W:</p>
+    <VImage :src="nprImageNormalized" width="300" />
+    <p>npr W & H (can't have a custom ratio):</p>
+    <VImage :src="nprImageNormalized" width="300" height="50" />
+    <p>npr raw:</p>
+    <VImage :src="nprImageNormalized" />
+    <p>npr square:</p>
+    <VImage :src="nprImageNormalizedSquare" width="300" />
+    <p>npr wide:</p>
+    <VImage :src="nprImageNormalizedWide" width="300" />
   </div>
 </template>

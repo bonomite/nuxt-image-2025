@@ -29,15 +29,6 @@ export const getImage: ProviderGetImage = (
         doOriginal ? `i/0/0/c/${quality}` : '',
     )
     const url = withBase(joinURL(options, src), baseURL)
-    console.log("doFill", doFill)
-    console.log("doWidth", doWidth)
-    console.log("doHeight", doHeight)
-    console.log("doOriginal", doOriginal)
-    console.log("width", width)
-    console.log("height", height)
-    console.log("publisher options", options)
-    console.log("publisher url", url)
-
 
     return {
         url,
