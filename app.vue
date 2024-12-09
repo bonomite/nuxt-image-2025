@@ -9,10 +9,10 @@ import { wagtailImage, publisherImage, nprImage } from "~/utils/imageData"
       src="/raven_phoenix_mix.jpg"
       credit="Photo by Thomas Bono"
       alt="two birds"
-      caption="this is a sample caption"
+      caption="This is a sample caption"
     >
-      <template #above>This is a named slot above the image</template>
-      <template #below>This is a named slot below the image</template>
+      <template #above>slot above the image</template>
+      <template #below>slot below the image</template>
     </VImage>
     <p>wagtail:</p>
     <VImage :src="imageNormalizer(wagtailImage)" width="600" height="100" />
