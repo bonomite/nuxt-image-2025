@@ -34,9 +34,6 @@ export const getImage: ProviderGetImage = (
         theWidth = extractNprMax(src)
     }
 
-    console.log('## theWidth= ', theWidth)
-
-
     const url = src
         .replace("{width}", String(theWidth))
         .replace("{quality}", String(quality))

@@ -1,5 +1,4 @@
 const getNprImage = (item, nprImageType) => {
-    console.log("getting npr image")
     try {
         let imageUrl = null
 
@@ -53,7 +52,6 @@ const getProvider = (imgObj) => {
 
 export const imageNormalizer = (imgObj, nprImageType = "standard") => {
     const provider = getProvider(imgObj)
-    console.log("provider = ", provider)
     let src = ""
     let credit = null
     let creditLink = null
