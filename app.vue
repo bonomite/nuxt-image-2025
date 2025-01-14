@@ -1,6 +1,11 @@
 <script setup>
 import { imageNormalizer } from "~/utils/imageNormalizer"
 import { wagtailImage, publisherImage, nprImage } from "~/utils/imageData"
+const wagtailImageNormalized = imageNormalizer(wagtailImage)
+const publisherImageNormalized = imageNormalizer(publisherImage)
+const nprImageNormalized = imageNormalizer(nprImage)
+const nprImageNormalizedSq = imageNormalizer(nprImage, "square")
+const nprImageNormalizedWd = imageNormalizer(nprImage, "wide")
 </script>
 <template>
   <div>
@@ -15,22 +20,22 @@ import { wagtailImage, publisherImage, nprImage } from "~/utils/imageData"
       <template #below>slot below the image</template>
     </VImage>
     <p>wagtail:</p>
-    <VImage :src="imageNormalizer(wagtailImage)" width="600" height="100" />
+    <VImage :src="wagtailImageNormalized" width="600" height="100" />
     <p>wagtail raw:</p>
-    <VImage :src="imageNormalizer(wagtailImage)" />
+    <VImage :src="wagtailImageNormalized" />
     <p>publisher:</p>
-    <VImage :src="imageNormalizer(publisherImage)" width="600" height="100" />
+    <VImage :src="publisherImageNormalized" width="600" height="100" />
     <p>publisher raw:</p>
-    <VImage :src="imageNormalizer(publisherImage)" />
+    <VImage :src="publisherImageNormalized" />
     <p>npr W:</p>
-    <VImage :src="imageNormalizer(nprImage)" width="300" />
+    <VImage :src="nprImageNormalized" width="300" />
     <p>npr W & H (can't have a custom ratio):</p>
-    <VImage :src="imageNormalizer(nprImage)" width="300" height="50" />
+    <VImage :src="nprImageNormalized" width="300" height="50" />
     <p>npr raw:</p>
-    <VImage :src="imageNormalizer(nprImage)" />
+    <VImage :src="nprImageNormalized" />
     <p>npr square:</p>
-    <VImage :src="imageNormalizer(nprImage, 'square')" width="300" />
+    <VImage :src="nprImageNormalizedSq" width="300" />
     <p>npr wide:</p>
-    <VImage :src="imageNormalizer(nprImage, 'wide')" width="300" />
+    <VImage :src="nprImageNormalizedWd" width="300" />
   </div>
 </template>
